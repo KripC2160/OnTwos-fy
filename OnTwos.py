@@ -1,6 +1,6 @@
 
 import bpy 
-from bpy.props import IntProperty
+from bpy.props import IntProperty, BoolProperty
 
 bl_info = {
     'name': 'OnTwos-fy',
@@ -14,17 +14,25 @@ bl_info = {
 }
 
 class OTProperty(bpy.types.PropertyGroup):
+    
+    custom_keyframe: BoolProperty(
+        name = "Custom Keyframe",
+        description = "set custom keyframe to apply the OnTwo-fy to",
+        default = False,
+    )
+    
     key_str : IntProperty(
         name = "Start Frame",
         description = "value for the start frame of the breakdown animation",
-        default = 1,
+        default = 0,
     )
     
     key_end : IntProperty(
         name = "End Frame",
         description = "value for the end frame of the breakdown animation",
-        default = 120,
+        default = 0,
     )
+    
 
 class OT_Process(bpy.types.Operator):
     bl_idname = "otfy.proces"
@@ -32,15 +40,21 @@ class OT_Process(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
+        
         on_two = False 
         scene = context.scene
         my_twol = scene.OTfy_tools
         
-        return {'FINISHED'}
+        if my_twol.custom_keyframe == False:
+            pass
+        else:
+            x = mytwol.key_str
+            
+            for x in range(key_end):
+                pass
         
+        return {'FINISHED'}     
         
-        
-
 class OnTwos(bpy.types.Panel):
     bl_label = "ontwos-fy"
     bl_idname = "OTfy.id"
@@ -55,6 +69,8 @@ class OnTwos(bpy.types.Panel):
         mytwol = scene.OTfy_tools
         
         layout.operator(OT_Process.bl_idname, text="OnTwos-fy!", icon="SORT_ASC")
+        layout.prop(mytwol, "custom_keyframe")
+        layout = layout.row(align=True)
         layout.prop(mytwol, "key_str")
         layout.prop(mytwol, "key_end")
         
@@ -64,11 +80,11 @@ classes = (
     OnTwos,
 )
     
-    
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
         bpy.types.Scene.OTfy_tools = bpy.props.PointerProperty(type=OTProperty)
+        
         
 def unregister():
     for cls in classes:
