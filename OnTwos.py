@@ -35,7 +35,7 @@ class OTProperty(bpy.types.PropertyGroup):
     
 
 class OT_Process(bpy.types.Operator):
-    bl_idname = "otfy.proces"
+    bl_idname = "otfy.process"
     bl_label = "OnTwos-fy"
     bl_options = {'REGISTER', 'UNDO'}
     
@@ -44,9 +44,26 @@ class OT_Process(bpy.types.Operator):
         on_two = False 
         scene = context.scene
         my_twol = scene.OTfy_tools
-        
+        bonecount = 0 
         if my_twol.custom_keyframe == False:
-            pass
+            if context.active_object.type == "ARMATURE":
+                for bone in bpy.data.objects[context.active_object.name].data.bones:
+                    bone.select = True
+                    for f in range(scene.frame_start, scene.frame_end+1):
+                        
+                        bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="location", frame=f)
+                        #bone.keyframe_insert(data_path="location", frame=f)
+                        #bone.keyframe_insert(data_path="rotation", frame=f)
+                        #bone.keyframe_insert(data_path="scale", frame=f)
+                        
+                    bonecount += 1
+            
+            #for f in range(scene.frame_start, scene.frame_end+1):
+            #    context.active_object.type.keyframe_insert(data_path="location", frame=f)
+            #    context.active_object.type.keyframe_insert(data_path="rotation", frame=f)
+            #    context.active_object.type.keyframe_insert(data_path="scale", frame=f)
+                        
+                    
         else:
             x = mytwol.key_str
             
