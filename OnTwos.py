@@ -45,31 +45,31 @@ class OT_Process(bpy.types.Operator):
         scene = context.scene
         my_twol = scene.OTfy_tools
         bonecount = 0 
+
         if my_twol.custom_keyframe == False:
             if context.active_object.type == "ARMATURE":
                 for bone in bpy.data.objects[context.active_object.name].data.bones:
                     bone.select = True
                     for f in range(scene.frame_start, scene.frame_end+1):
-                        
-                        bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="location", frame=f)
-                        #bone.keyframe_insert(data_path="location", frame=f)
-                        #bone.keyframe_insert(data_path="rotation", frame=f)
-                        #bone.keyframe_insert(data_path="scale", frame=f)
-                        
+                        bpy.context.scene.frame_set(f)
+                        if on_two == False:
+                            bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="location", frame=f)
+                            bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="rotation", frame=f)
+                            bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="scale", frame=f)
+                            on_two = True
+                        elif on_two == True:
+                            on_two = False 
                     bonecount += 1
-            
-            #for f in range(scene.frame_start, scene.frame_end+1):
-            #    context.active_object.type.keyframe_insert(data_path="location", frame=f)
-            #    context.active_object.type.keyframe_insert(data_path="rotation", frame=f)
-            #    context.active_object.type.keyframe_insert(data_path="scale", frame=f)
-                        
-                    
+            for f in range(scene.frame_start, scene.frame_end+1):
+                bpy.context.scene.frame_set(f)
+                context.active_object.type.keyframe_insert(data_path="location", frame=f)
+                context.active_object.type.keyframe_insert(data_path="rotation", frame=f)
+                context.active_object.type.keyframe_insert(data_path="scale", frame=f)
         else:
             x = mytwol.key_str
             
-            for x in range(key_end):
+            for x in range(mytwol.key_end):
                 pass
-        
         return {'FINISHED'}     
         
 class OnTwos(bpy.types.Panel):
@@ -85,7 +85,7 @@ class OnTwos(bpy.types.Panel):
         scene = context.scene
         mytwol = scene.OTfy_tools
         
-        layout.operator(OT_Process.bl_idname, text="OnTwos-fy!", icon="SORT_ASC")
+        layout.operator(OT_Process.bl_idname, text="OnTwos-fy!", icon="POSE_HLT")
         layout.prop(mytwol, "custom_keyframe")
         layout = layout.row(align=True)
         layout.prop(mytwol, "key_str")
