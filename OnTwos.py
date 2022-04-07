@@ -54,7 +54,7 @@ class OT_Process(bpy.types.Operator):
                         bpy.context.scene.frame_set(f)
                         if on_two == False:
                             bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="location", frame=f)
-                            bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="rotation", frame=f)
+                            bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="rotation_quaternion", frame=f)
                             bpy.context.selected_objects[0].pose.bones[bonecount].keyframe_insert(data_path="scale", frame=f)
                             on_two = True
                         elif on_two == True:
@@ -70,6 +70,8 @@ class OT_Process(bpy.types.Operator):
             
             for x in range(mytwol.key_end):
                 pass
+            
+        bpy.ops.action.interpolation_type(type='CONSTANT')
         return {'FINISHED'}     
         
 class OnTwos(bpy.types.Panel):
