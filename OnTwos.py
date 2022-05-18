@@ -1,6 +1,7 @@
 
 import bpy 
 from bpy.props import IntProperty, BoolProperty
+from bpy import context
 
 bl_info = {
     'name': 'OnTwos-fy',
@@ -60,25 +61,47 @@ class OT_Process(bpy.types.Operator):
                         elif on_two == True:
                             on_two = False 
                     bonecount += 1
+            on_two = False 
             for f in range(scene.frame_start, scene.frame_end+1):
                 bpy.context.scene.frame_set(f)
-                context.active_object.type.keyframe_insert(data_path="location", frame=f)
-                context.active_object.type.keyframe_insert(data_path="rotation", frame=f)
-                context.active_object.type.keyframe_insert(data_path="scale", frame=f)
+                
+                if on_two == False:
+                    ob = context.object
+                    ob.keyframe_insert(data_path="location", frame=f)
+                    ob.keyframe_insert(data_path="rotation_quaternion", frame=f)
+                    ob.keyframe_insert(data_path="scale", frame=f)
+                    
+                    
+                    
+                    on_two = True
+                elif on_two == True:
+                    on_two = False 
             
             fc = bpy.context.active_object.animation_data.action.fcurves
-            loc_x_curve = fc.find('scale', index=0)
-            for k in loc_x_curve.keyframe_points:
-                # k.co[0] is the frame number
-                # k.co[1] is the keyed value
-                k.interpolation = 'CONSTANT'            
+            
+            for i in range(0, 3):
+                loc_l_curve = fc.find('location', index=i)
+                loc_r_curve = fc.find('rotation_quaternion', index=i)
+                
+                for k in loc_l_curve.keyframe_points:
+                    k.interpolation = 'CONSTANT'
+                
+                for k in loc_r_curve.keyframe_points:
+                    k.interpolation = 'CONSTANT'
+                
+            
+            #loc_x_curve = fc.find('location', index=0)
+            #for k in loc_x_curve.keyframe_points:
+                 #k.co[0] is the frame number
+                 #k.co[1] is the keyed value
+                #k.interpolation = 'CONSTANT'     
         else:
             x = mytwol.key_str
             
             for x in range(mytwol.key_end):
                 pass
             
-        bpy.ops.action.interpolation_type(type='CONSTANT')
+        #bpy.ops.action.interpolation_type(type='CONSTANT')
         return {'FINISHED'}     
         
 class OnTwos(bpy.types.Panel):
